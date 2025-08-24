@@ -8,6 +8,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #gameContainer {
@@ -102,37 +106,56 @@ button:hover {
 /* Mobile responsive design */
 @media (max-width: 850px) {
     body {
-        padding: 10px;
+        padding: 5px;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    
+    #gameContainer {
+        width: 100%;
+        max-width: 100vw;
     }
     
     #gameCanvas {
-        width: 100%;
-        max-width: 800px;
+        width: 100vw;
+        max-width: 100vw;
         height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+        touch-action: none;
     }
     
     #ui {
         width: 100%;
+        max-width: 100vw;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 5px;
+        justify-content: space-around;
+        padding: 5px;
+        box-sizing: border-box;
     }
     
     .screen {
-        padding: 20px;
-        margin: 10px;
+        padding: 15px;
+        margin: 5px;
+        width: calc(100vw - 20px);
+        box-sizing: border-box;
     }
     
     h1 {
-        font-size: 2em;
+        font-size: 1.8em;
+        margin: 10px 0;
     }
     
     p {
-        font-size: 1em;
+        font-size: 0.9em;
+        margin: 8px 0;
     }
     
     button {
         padding: 12px 25px;
         font-size: 1em;
+        margin: 10px 5px;
     }
 }
 

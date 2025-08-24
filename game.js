@@ -71,14 +71,19 @@ class Game {
     setupTouchControls() {
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchStartTime = 0;
         let isTouching = false;
+        let hasMoved = false;
         
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             isTouching = true;
+            hasMoved = false;
             const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
+            const rect = this.canvas.getBoundingClientRect();
+            touchStartX = touch.clientX - rect.left;
+            touchStartY = touch.clientY - rect.top;
+            touchStartTime = Date.now();
         });
         
         this.canvas.addEventListener('touchmove', (e) => {
@@ -86,8 +91,16 @@ class Game {
             if (!isTouching) return;
             
             const touch = e.touches[0];
-            const deltaX = touch.clientX - touchStartX;
-            const deltaY = touch.clientY - touchStartY;
+            const rect = this.canvas.getBoundingClientRect();
+            const currentX = touch.clientX - rect.left;
+            const currentY = touch.clientY - rect.top;
+            const deltaX = currentX - touchStartX;
+            const deltaY = currentY - touchStartY;
+            
+            // If movement is significant, mark as moved
+            if (Math.abs(deltaX) > 15 || Math.abs(deltaY) > 15) {
+                hasMoved = true;
+            }
             
             // Reset movement keys
             this.keys['ArrowLeft'] = false;
@@ -96,18 +109,19 @@ class Game {
             this.keys['ArrowDown'] = false;
             
             // Set movement based on touch direction
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX > 20) this.keys['ArrowRight'] = true;
-                if (deltaX < -20) this.keys['ArrowLeft'] = true;
-            } else {
-                if (deltaY > 20) this.keys['ArrowDown'] = true;
-                if (deltaY < -20) this.keys['ArrowUp'] = true;
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 15) {
+                if (deltaX > 15) this.keys['ArrowRight'] = true;
+                if (deltaX < -15) this.keys['ArrowLeft'] = true;
+            } else if (Math.abs(deltaY) > 15) {
+                if (deltaY > 15) this.keys['ArrowDown'] = true;
+                if (deltaY < -15) this.keys['ArrowUp'] = true;
             }
         });
         
         this.canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
-            isTouching = false;
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
             
             // Reset all movement keys
             this.keys['ArrowLeft'] = false;
@@ -115,8 +129,22 @@ class Game {
             this.keys['ArrowUp'] = false;
             this.keys['ArrowDown'] = false;
             
-            // Throw newspaper on tap
-            this.throwPackage();
+            // Only throw on tap (short touch without much movement)
+            if (!hasMoved && touchDuration < 300) {
+                this.throwPackage();
+            }
+            
+            isTouching = false;
+        });
+        
+        // Prevent default touch behaviors on the canvas
+        this.canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            isTouching = false;
+            this.keys['ArrowLeft'] = false;
+            this.keys['ArrowRight'] = false;
+            this.keys['ArrowUp'] = false;
+            this.keys['ArrowDown'] = false;
         });
     }
     
