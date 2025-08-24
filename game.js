@@ -20,6 +20,9 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         this.state = GAME_STATES.START;
         
+        // Set up canvas for mobile compatibility
+        this.setupCanvas();
+        
         this.score = 0;
         this.lives = 3;
         this.packages = 10;
@@ -40,6 +43,28 @@ class Game {
         this.gameLoop();
     }
     
+    setupCanvas() {
+        // Ensure canvas has the right dimensions
+        this.canvas.width = CONFIG.CANVAS_WIDTH;
+        this.canvas.height = CONFIG.CANVAS_HEIGHT;
+        
+        // Set CSS size for mobile
+        const isMobile = window.innerWidth <= 850;
+        if (isMobile) {
+            const containerWidth = Math.min(window.innerWidth * 0.95, 800);
+            const containerHeight = (containerWidth * CONFIG.CANVAS_HEIGHT) / CONFIG.CANVAS_WIDTH;
+            
+            this.canvas.style.width = containerWidth + 'px';
+            this.canvas.style.height = containerHeight + 'px';
+        }
+        
+        // Disable image smoothing for pixel-perfect rendering
+        this.ctx.imageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.msImageSmoothingEnabled = false;
+    }
+    
     setupEventListeners() {
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
@@ -56,6 +81,11 @@ class Game {
         
         // Touch controls for mobile
         this.setupTouchControls();
+        
+        // Handle window resize for mobile orientation changes
+        window.addEventListener('resize', () => {
+            setTimeout(() => this.setupCanvas(), 100);
+        });
         
         // UI buttons
         document.getElementById('startButton').addEventListener('click', () => {
