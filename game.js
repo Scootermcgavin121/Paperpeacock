@@ -54,6 +54,9 @@ class Game {
             this.keys[e.code] = false;
         });
         
+        // Touch controls for mobile
+        this.setupTouchControls();
+        
         // UI buttons
         document.getElementById('startButton').addEventListener('click', () => {
             this.startGame();
@@ -62,6 +65,58 @@ class Game {
         document.getElementById('restartButton').addEventListener('click', () => {
             this.resetGame();
             this.startGame();
+        });
+    }
+    
+    setupTouchControls() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isTouching = false;
+        
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isTouching = true;
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+        
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (!isTouching) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            
+            // Reset movement keys
+            this.keys['ArrowLeft'] = false;
+            this.keys['ArrowRight'] = false;
+            this.keys['ArrowUp'] = false;
+            this.keys['ArrowDown'] = false;
+            
+            // Set movement based on touch direction
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 20) this.keys['ArrowRight'] = true;
+                if (deltaX < -20) this.keys['ArrowLeft'] = true;
+            } else {
+                if (deltaY > 20) this.keys['ArrowDown'] = true;
+                if (deltaY < -20) this.keys['ArrowUp'] = true;
+            }
+        });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isTouching = false;
+            
+            // Reset all movement keys
+            this.keys['ArrowLeft'] = false;
+            this.keys['ArrowRight'] = false;
+            this.keys['ArrowUp'] = false;
+            this.keys['ArrowDown'] = false;
+            
+            // Throw newspaper on tap
+            this.throwPackage();
         });
     }
     
@@ -148,8 +203,8 @@ class Game {
             this.gameOver();
         }
         
-        // Check if route is complete (finish line reached)
-        if (this.finishLine && this.worldOffset > this.finishLine.x) {
+        // Check if route is complete (player crosses finish line)
+        if (this.finishLine && this.player.x + this.worldOffset >= this.finishLine.x) {
             this.routeComplete();
         }
     }
@@ -798,7 +853,13 @@ class Obstacle {
         this.height = type === 'car' ? 30 : 20;
         
         if (type === 'car') {
-            this.y = CONFIG.CANVAS_HEIGHT/2 - 15;
+            // Stagger cars across different lanes
+            const lanes = [
+                CONFIG.CANVAS_HEIGHT/2 - 35, // Top lane
+                CONFIG.CANVAS_HEIGHT/2 - 15, // Center lane  
+                CONFIG.CANVAS_HEIGHT/2 + 5    // Bottom lane
+            ];
+            this.y = lanes[Math.floor(Math.random() * lanes.length)];
             this.speed = 0; // Cars don't move
             this.direction = 1;
         } else {
