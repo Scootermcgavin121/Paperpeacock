@@ -1,0 +1,100 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameContainer {
+    text-align: center;
+    position: relative;
+}
+
+.screen {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px;
+    border: 3px solid #fff;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+h1 {
+    font-size: 3em;
+    margin: 0 0 20px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: #ffeb3b;
+}
+
+p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px 10px;
+    transition: background 0.3s;
+    font-family: 'Courier New', monospace;
+}
+
+button:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+.controls {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+#gameScreen {
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+#ui {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-around;
+    width: 800px;
+    box-sizing: border-box;
+}
+
+#ui div {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#gameCanvas {
+    border: 3px solid #fff;
+    border-radius: 5px;
+    background: #87CEEB;
+    display: block;
+    margin: 0 auto;
+}
+
+#finalScore {
+    font-size: 1.5em;
+    color: #ffeb3b;
+    margin: 20px 0;
+}
